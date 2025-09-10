@@ -1,93 +1,73 @@
-import { Injectable } from "@angular/core";
-import { Apollo } from "apollo-angular";
-import { InputVenta } from "./input.venta";
-import { map, catchError } from "rxjs/operators";
-import { throwError } from "rxjs";
-import { CREATE_VENTA, DELETE_VENTA, GET_VENTAS, GET_VENTAS_BY_ID, UPDATE_VENTA } from "src/app/graphql/venta.graphql";
+import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { Observable, map } from 'rxjs';
+import {
+  VENTAS_QUERY,
+  VENTA_BY_ID_QUERY,
+  CREAR_VENTA_MUTATION,
+  ACTUALIZAR_VENTA_MUTATION,
+  ELIMINAR_VENTA_MUTATION
+} from 'src/app/graphql/venta.graphql';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class VentaService {
-  constructor(private apollo: Apollo) {}
 
-  getAll() {
-    return this.apollo
-      .watchQuery<{ findAllVentas: any[] }>({
-        query: GET_VENTAS,
-        fetchPolicy: "network-only",
-      })
-      .valueChanges.pipe(
-        map((result) => result.data.findAllVentas),
-        catchError((error) => {
-          console.error("Error cargando ventas:", error);
-          return throwError(() => new Error("Error al cargar ventas"));
-        })
-      );
+  constructor(private apollo: Apollo) { }
+
+  obtenerVentas(): Observable<any[]> {
+    return this.apollo.watchQuery({
+      query: VENTAS_QUERY,
+      fetchPolicy: 'network-only'
+    }).valueChanges.pipe(
+      map((result: any) => result.data.ventas)
+    );
   }
 
-  getById(id: number) {
-    return this.apollo
-      .watchQuery<{ findVentaById: any }>({
-        query: GET_VENTAS_BY_ID,
-        variables: { ventaId: id.toString() },
-      })
-      .valueChanges.pipe(
-        map((result) => result.data.findVentaById),
-        catchError((error) => {
-          console.error("Error buscando venta:", error);
-          return throwError(() => new Error("Error al buscar venta"));
-        })
-      );
+  obtenerVentaPorId(id: number): Observable<any> {
+    return this.apollo.watchQuery({
+      query: VENTA_BY_ID_QUERY,
+      variables: { id },
+      fetchPolicy: 'network-only'
+    }).valueChanges.pipe(
+      map((result: any) => result.data.venta)
+    );
   }
 
-  create(inputVenta: InputVenta) {
-    try {
-      const dto = inputVenta;
-
-      return this.apollo.mutate({
-        mutation: CREATE_VENTA,
-        variables: { input: dto },
-      }).pipe(
-        catchError((error) => {
-          console.error("Error creando venta:", error);
-          return throwError(() => new Error("Error al crear la venta: " + error.message));
-        })
-      );
-    } catch (error: any) {
-      return throwError(() => new Error(error.message));
-    }
+  crearVenta(ventaData: any): Observable<any> {
+    return this.apollo.mutate({
+      mutation: CREAR_VENTA_MUTATION,
+      variables: { input: ventaData },
+      refetchQueries: [{
+        query: VENTAS_QUERY
+      }]
+    }).pipe(
+      map((result: any) => result.data.crearVenta)
+    );
   }
 
-  update(id: number, inputVenta: InputVenta) {
-    try {
-      const dto = inputVenta;
-
-      return this.apollo.mutate({
-        mutation: UPDATE_VENTA,
-        variables: { id: id.toString(), input: dto },
-      }).pipe(
-        catchError((error) => {
-          console.error("Error actualizando venta:", error);
-          return throwError(() => new Error("Error al actualizar la venta: " + error.message));
-        })
-      );
-    } catch (error: any) {
-      return throwError(() => new Error(error.message));
-    }
+  actualizarVenta(id: number, ventaData: any): Observable<any> {
+    return this.apollo.mutate({
+      mutation: ACTUALIZAR_VENTA_MUTATION,
+      variables: { id, input: ventaData },
+      refetchQueries: [{
+        query: VENTAS_QUERY
+      }]
+    }).pipe(
+      map((result: any) => result.data.actualizarVenta)
+    );
   }
 
-  delete(id: number) {
-    return this.apollo
-      .mutate({
-        mutation: DELETE_VENTA,
-        variables: { id: id.toString() },
-      })
-      .pipe(
-        catchError((error) => {
-          console.error("Error eliminando venta:", error);
-          return throwError(() => new Error("Error al eliminar la venta: " + error.message));
-        })
-      );
+  eliminarVenta(id: number): Observable<any> {
+    return this.apollo.mutate({
+      mutation: ELIMINAR_VENTA_MUTATION,
+      variables: { id },
+      refetchQueries: [{
+        query: VENTAS_QUERY
+      }]
+    }).pipe(
+      map((result: any) => result.data.eliminarVenta)
+    );
   }
 }

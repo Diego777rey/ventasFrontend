@@ -1,0 +1,37 @@
+<div class="modal fade" [class.show]="isOpen" [style.display]="isOpen ? 'block' : 'none'" tabindex="-1" id="clienteModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Cliente</h5>
+        <button type="button" class="btn-close" (click)="onModalClose()"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-control mb-2" placeholder="Buscar..." 
+               [(ngModel)]="clienteSearch" [ngModelOptions]="{standalone: true}">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Documento</th>
+              <th>Email</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cliente of filteredClientes">
+              <td>{{ cliente.nombre }}</td>
+              <td>{{ cliente.documento }}</td>
+              <td>{{ cliente.email }}</td>
+              <td>
+                <button class="btn r1 btn-sm" (click)="onClienteSelect(cliente)">
+                  Agregar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="isOpen" *ngIf="isOpen"></div>

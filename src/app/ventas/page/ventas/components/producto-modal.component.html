@@ -1,0 +1,37 @@
+<div class="modal fade" [class.show]="isOpen" [style.display]="isOpen ? 'block' : 'none'" tabindex="-1" id="productoModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Producto</h5>
+        <button type="button" class="btn-close" (click)="onModalClose()"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-control mb-2" placeholder="Buscar..." 
+               [(ngModel)]="productoSearch" [ngModelOptions]="{standalone: true}">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of filteredProductos">
+              <td>{{ producto.descripcion }}</td>
+              <td>{{ producto.precioVenta | currency:'Gs ' }}</td>
+              <td>{{ producto.stock }}</td>
+              <td>
+                <button class="btn r1 btn-sm" (click)="onProductoSelect(producto)">
+                  Agregar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="isOpen" *ngIf="isOpen"></div>

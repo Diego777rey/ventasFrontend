@@ -1,0 +1,10 @@
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+.r1{
+  background-color: gold;
+}

@@ -1,126 +1,125 @@
-import { gql } from "apollo-angular";
+import gql from 'graphql-tag';
 
-export const GET_VENTAS = gql`
-  query GetAllVentas {
-    findAllVentas {
-   id
-    fecha
-    tipoPago
-    cliente {
+export const VENTAS_QUERY = gql`
+  query {
+    ventas {
       id
-      nombre
-      apellido
-    }
-    vendedor {
-      id
-      nombre
-      apellido
-    }
-    items {
-      id
-      cantidad
-      precio
-      producto {
+      fecha
+      tipoPago
+      cliente {
         id
-        descripcion
-        precioVenta
+        nombre
+        documento
+      }
+      vendedor {
+        id
+        nombre
+        documento
+      }
+      items {
+        id
+        cantidad
+        precio
+        subtotal
+        producto {
+          id
+          descripcion
+          precioVenta
+        }
       }
     }
   }
-}
-`;
-export const GET_VENTAS_BY_ID = gql`
-  query GetVentaById($ventaId: ID!) {
-    findVentaById(ventaId: $ventaId) {
-   id
-    fecha
-    tipoPago
-    cliente {
-      id
-      nombre
-      apellido
-    }
-    vendedor {
-      id
-      nombre
-      apellido
-    }
-    items {
-      id
-      cantidad
-      precio
-      producto {
-        id
-        descripcion
-        precioVenta
-      }
-    }
-  }
-}
 `;
 
-export const CREATE_VENTA = gql`
-  mutation CreateVenta($input: InputVenta!) {
-    createVenta(inputVenta: $input) {
-   id
-    fecha
-    tipoPago
-    cliente {
+export const VENTA_BY_ID_QUERY = gql`
+  query Venta($id: ID!) {
+    venta(id: $id) {
       id
-      nombre
-      apellido
-    }
-    vendedor {
-      id
-      nombre
-      apellido
-    }
-    items {
-      id
-      cantidad
-      precio
-      producto {
+      fecha
+      tipoPago
+      cliente {
         id
-        descripcion
-        precioVenta
+        nombre
+        documento
+        email
+      }
+      vendedor {
+        id
+        nombre
+        documento
+        email
+      }
+      items {
+        id
+        cantidad
+        precio
+        producto {
+          id
+          descripcion
+          precioVenta
+          stock
+        }
       }
     }
   }
-}
 `;
-export const UPDATE_VENTA = gql`
-  mutation UpdateVenta($id: ID!, $input: InputVenta!) {
-    updateVenta(id: $id, inputVenta: $input) {
-   id
-    fecha
-    tipoPago
-    cliente {
+
+export const CREAR_VENTA_MUTATION = gql`
+  mutation CrearVenta($input: VentaInput!) {
+    crearVenta(input: $input) {
       id
-      nombre
-      apellido
-    }
-    vendedor {
-      id
-      nombre
-      apellido
-    }
-    items {
-      id
-      cantidad
-      precio
-      producto {
+      fecha
+      tipoPago
+      cliente {
         id
-        descripcion
-        precioVenta
+        nombre
+      }
+      vendedor {
+        id
+        nombre
+      }
+      items {
+        id
+        cantidad
+        precio
+        producto {
+          id
+          descripcion
+        }
       }
     }
   }
-}
 `;
-export const DELETE_VENTA = gql`
-  mutation DeleteVenta($id: ID!) {
-    deleteVenta(id: $id) {
+
+export const ACTUALIZAR_VENTA_MUTATION = gql`
+  mutation ActualizarVenta($id: ID!, $input: VentaInput!) {
+    actualizarVenta(id: $id, input: $input) {
       id
+      fecha
+      tipoPago
+      cliente {
+        id
+        nombre
+      }
+      vendedor {
+        id
+        nombre
+      }
+      items {
+        id
+        cantidad
+        precio
+        producto {
+          id
+          descripcion
+        }
+      }
     }
+  }
+`;
+
+export const ELIMINAR_VENTA_MUTATION = gql`
+  mutation EliminarVenta($id: ID!) {
+    eliminarVenta(id: $id)
   }
 `;
