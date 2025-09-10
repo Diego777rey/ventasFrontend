@@ -1,0 +1,59 @@
+body{
+background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .oven-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .btn-google {
+            background-color: #4285F4;
+            color: white;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .divider span {
+            padding: 0 10px;
+            color: #777;
+        }
+        .form-control {
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .btn-login {
+            padding: 10px;
+            font-weight: 600;
+        }
+        .links a {
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+            }
+        .btn{
+            background-color: skyblue;
+        }
+        .rn{
+            text-align: center;
+        }

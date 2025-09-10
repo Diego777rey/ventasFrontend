@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="login-container">
+        <h2 class="oven-header">Bienvenido</h2>
+        <div class="rn">
+        <img src="assets/inicio.png" alt="">
+        </div>
+        <form [formGroup]="usuarioForm" (ngSubmit)="iniciarSesion()">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nombre de usuario</label>
+                <input type="text" class="form-control" id="username" placeholder="Ingresa tu nombre de usuario" formControlName="nombre">
+                <div class="alert alert-danger mt-2" [hidden]="nombre.valid || nombre.pristine"> <!--el pristin lo que hace es practicamente ocultar el texto al ingresar en la pantalla-->
+                    El nombre es obligatorio
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña" formControlName="contrasenha">
+              <div class="alert alert-danger mt-2" [hidden]="contrasenha.valid || contrasenha.pristine"> <!--el pristin lo que hace es practicamente ocultar el texto al ingresar en la pantalla-->
+                    La contrasenha es obligatorio
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-login"[disabled]="usuarioForm.invalid">Iniciar sesión</button>
+            </div>
+        </form>
+    </div>
+</div>

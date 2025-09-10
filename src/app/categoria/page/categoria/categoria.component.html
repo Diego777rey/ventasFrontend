@@ -1,0 +1,71 @@
+<div class="container mt-4">
+  <h2>Registrar Categorias</h2>
+
+  <div class="row">
+    <!-- Formulario -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-dark">
+          Formulario de Categoria
+        </div>
+        <div class="card-body">
+          <form [formGroup]="CategoriaForm" (ngSubmit)="onSave()">
+            <div class="mb-3">
+              <label class="form-label">Descripcion</label>
+              <input type="text" class="form-control" formControlName="descripcion" [disabled]="formDisabled">
+              <div class="text-danger mt-1"
+                *ngIf="CategoriaForm.get('descripcion')?.invalid && CategoriaForm.get('descripcion')?.touched">
+                la descripcion es obligatorio
+              </div>
+            </div>
+            <div class="d-flex flex-wrap mt-3">
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="onNew()" [disabled]="!formDisabled">
+                <img src="assets/anhadir.png" alt="Nuevo" width="20" height="20" class="me-2">
+                Nuevo
+              </button>
+              <button type="submit" class="btn btn-dark me-2 mb-2" [disabled]="CategoriaForm.invalid || formDisabled">
+                <img [src]="editingId ? 'assets/actualizar.png' : 'assets/guardar.png'" width="20" class="me-2">
+                {{ editingId ? 'Actualizar' : 'Guardar' }}
+              </button>
+
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="editingId ? onDelete(editingId) : null"
+                [disabled]="editingId === null">
+                <img src="assets/eliminar.png" alt="Eliminar" width="20" height="20" class="me-2">
+                Eliminar
+              </button>
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="onCancel()" [disabled]="formDisabled">
+                <img src="assets/cancelar.png" alt="Nuevo" width="20" height="20" class="me-2">
+                Cancelar
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Buscar Categoriaes" [(ngModel)]="searchText">
+      </div>
+
+      <table class="table table-striped table-bordered" *ngIf="filteredCategorias.length > 0">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Descripcion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let Categoria of filteredCategorias" (click)="onSelect(Categoria)" style="cursor:pointer;">
+            <td>{{Categoria.id}}</td>
+            <td>{{Categoria.descripcion}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="filteredCategorias.length === 0" class="text-center mt-3">
+        <h5>No hay Categorias registrados.</h5>
+      </div>
+    </div>
+  </div>
+</div>

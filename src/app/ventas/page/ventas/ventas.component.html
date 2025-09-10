@@ -1,0 +1,225 @@
+<div class="container mt-4">
+  <h2>Registrar Venta</h2>
+
+  <form [formGroup]="ventaForm" (ngSubmit)="onSave()">
+    <div class="row">
+      <div class="col-md-3">
+        <label>Fecha</label>
+        <input type="date" class="form-control" formControlName="fecha" [disabled]="formDisabled">
+      </div>
+      <div class="col-md-3">
+        <label>Tipo de Pago</label>
+        <select class="form-control" formControlName="tipoPago" [disabled]="formDisabled">
+          <option value="EFECTIVO">EFECTIVO</option>
+          <option value="CREDITO">CREDITO</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>Cliente</label>
+        <div class="input-group">
+          <input type="text" class="form-control"
+                 [value]="getClienteNombre(ventaForm.get('clienteId')?.value)" readonly>
+          <button type="button" class="btn btn-dark" (click)="abrirModalCliente()" [disabled]="formDisabled">
+            <img src="assets/lupa.png" alt="Buscar" width="20" height="20">
+          </button>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label>Vendedor</label>
+        <div class="input-group">
+          <input type="text" class="form-control"
+                 [value]="getVendedorNombre(ventaForm.get('vendedorId')?.value)" readonly>
+          <button type="button" class="btn btn-dark" (click)="abrirModalVendedor()" [disabled]="formDisabled">
+            <img src="assets/lupa.png" alt="Buscar" width="20" height="20">
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <label>Productos</label>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Seleccionar producto" readonly>
+          <button type="button" class="btn btn-dark" (click)="abrirModalProducto()" [disabled]="formDisabled">
+            <img src="assets/lupa.png" alt="Buscar" width="20" height="20">
+          </button>
+        </div>
+      </div>
+      <div class="col-md-4 mt-4">
+        <button type="submit" class="btn ro mt-2" [disabled]="formDisabled">
+          {{ editingId ? 'Actualizar' : 'Guardar' }}
+        </button>
+        <button type="button" class="btn ro mt-2 ms-2" (click)="onNew()" [disabled]="!formDisabled">Nuevo</button>
+        <button type="button" class="btn r1 mt-2 ms-2" (click)="onCancel()" [disabled]="formDisabled">Cancelar</button>
+      </div>
+    </div>
+    <div class="row mt-3" *ngIf="ventaForm.value.items && ventaForm.value.items.length > 0">
+      <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Subtotal</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ventaForm.value.items; let i = index">
+              <td>{{ item.producto?.descripcion }}</td>
+              <td>
+                <input type="number" class="form-control" [value]="item.cantidad"
+                       (input)="updateItemQuantity(i, $event)" [disabled]="formDisabled">
+              </td>
+              <td>{{ item.precio | currency:'Gs ' }}</td>
+              <td>{{ (item.cantidad * item.precio) | currency:'Gs ' }}</td>
+              <td>
+                <button type="button" class="btn r1 btn-sm" (click)="removeItem(i)" [disabled]="formDisabled">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Total</th>
+              <th>{{ getTotalCantidad() }}</th>
+              <th></th>
+              <th>{{ getTotalMonto() | currency:'Gs ' }}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </form>
+
+  <hr class="mt-5">
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <input type="text" class="form-control" placeholder="Buscar venta..." [(ngModel)]="searchText" (ngModelChange)="onSearch()">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Vendedor</th>
+            <th>Tipo de Pago</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let venta of filteredVentas">
+            <td>{{ venta.fecha | date:'shortDate' }}</td>
+            <td>{{ venta.cliente?.nombre }}</td>
+            <td>{{ venta.vendedor?.nombre }}</td>
+            <td>{{ venta.tipoPago }}</td>
+            <td>{{ calcularTotalVenta(venta) | currency:'Gs ' }}</td>
+            <td>
+              <button class="btn ro btn-primary btn-sm" (click)="onSelect(venta)">Editar</button>
+              <button class="btn r1 btn-danger btn-sm ms-2" (click)="onDelete(venta.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal fade" id="clienteModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cliente of clientes">
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.documento }}</td>
+                <td>{{ cliente.email }}</td>
+                <td>
+                  <button class="btn ro btn-sm" (click)="selectCliente(cliente)" data-bs-dismiss="modal">Agregar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="vendedorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar Vendedor</h5>
+          <button type="button" class=" ro btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vendedor of vendedores">
+                <td>{{ vendedor.nombre }}</td>
+                <td>{{ vendedor.documento }}</td>
+                <td>{{ vendedor.email }}</td>
+                <td>
+                  <button class="btn ro btn-sm" (click)="selectVendedor(vendedor)" data-bs-dismiss="modal">Agregar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="productoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar Producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let producto of productos">
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precioVenta | currency:'Gs ' }}</td>
+                <td>
+                  <button class="btn btn-sm ro" (click)="selectProducto(producto)" data-bs-dismiss="modal">Agregar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

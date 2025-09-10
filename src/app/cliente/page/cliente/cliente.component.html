@@ -1,0 +1,117 @@
+<div class="container mt-4">
+  <h2>Registrar Clientes</h2>
+
+  <div class="row">
+    <!-- Formulario -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-dark">
+          Formulario de Cliente
+        </div>
+        <div class="card-body">
+          <form [formGroup]="clienteForm" (ngSubmit)="onSave()">
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" formControlName="nombre" [disabled]="formDisabled">
+              <div class="text-danger mt-1"
+                *ngIf="hasError('nombre', 'required')">
+                El nombre es obligatorio
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Apellido</label>
+              <input type="text" class="form-control" formControlName="apellido" [disabled]="formDisabled">
+              <div class="text-danger mt-1"
+                *ngIf="hasError('apellido', 'required')">
+                El apellido es obligatorio
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Documento</label>
+              <input type="text" class="form-control" formControlName="documento" [disabled]="formDisabled">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="text" class="form-control" formControlName="telefono" [disabled]="formDisabled">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" formControlName="email" [disabled]="formDisabled">
+              <div class="text-danger mt-1"
+                *ngIf="hasError('email', 'email')">
+                El email no es válido
+              </div>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" formControlName="activo" [disabled]="formDisabled">
+              <label class="form-check-label">Activo</label>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Fecha de Registro</label>
+              <input type="date" class="form-control" formControlName="fechaRegistro" [disabled]="formDisabled">
+            </div>
+            <div class="d-flex flex-wrap mt-3">
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="onNew()" [disabled]="!formDisabled">
+                <img src="assets/anhadir.png" alt="Nuevo" width="20" height="20" class="me-2">
+                Nuevo
+              </button>
+
+              <button type="submit" class="btn btn-dark me-2 mb-2" [disabled]="clienteForm.invalid || formDisabled">
+                <img [src]="editingId ? 'assets/actualizar.png' : 'assets/guardar.png'" width="20" class="me-2">
+                {{ editingId ? 'Actualizar' : 'Guardar' }}
+              </button>
+
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="editingId ? onDelete(editingId) : null"
+                [disabled]="editingId === null">
+                <img src="assets/eliminar.png" alt="Eliminar" width="20" height="20" class="me-2">
+                Eliminar
+              </button>
+
+              <button type="button" class="btn btn-dark me-2 mb-2" (click)="onCancel()" [disabled]="formDisabled">
+                <img src="assets/cancelar.png" alt="Cancelar" width="20" height="20" class="me-2">
+                Cancelar
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Buscar Clientes" [(ngModel)]="searchText">
+      </div>
+
+      <table class="table table-striped table-bordered" *ngIf="filteredClientes.length > 0">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Documento</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Activo</th>
+            <th>Fecha Registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cliente of filteredClientes" (click)="onSelect(cliente)" style="cursor:pointer;">
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.apellido }}</td>
+            <td>{{ cliente.documento }}</td>
+            <td>{{ cliente.telefono }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>{{ cliente.activo ? 'Sí' : 'No' }}</td>
+            <td>{{ cliente.fechaRegistro }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="filteredClientes.length === 0" class="text-center mt-3">
+        <h5>No hay Clientes registrados.</h5>
+      </div>
+    </div>
+  </div>
+</div>
